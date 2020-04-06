@@ -78,10 +78,12 @@ export default class EventList extends Component {
         },
       },
     ],
+    isLoading: true,
   };
 
   render() {
-    const { events } = this.state;
+    const { events, isLoading } = this.state;
+    if (isLoading) return <p>Loading events.........</p>;
     return (
       <main>
         <h2>List of Events</h2>
@@ -92,5 +94,17 @@ export default class EventList extends Component {
         </ul>
       </main>
     );
+  }
+
+  componentDidMount() {
+    const url =
+      "https://app.ticketmaster.com/discovery/v2/events.json?dmaId=324&apikey=56HXM4CNBHPHGG5ZsnfmrFO7LA9oSvz2";
+    fetch(url)
+      .then((buffer) => buffer.json())
+      .then((res) => {
+        const events = res._embedded.events;
+        console.log("events array", events, Array.isArray(events));
+        this.setState({ events, isLoading: false });
+      });
   }
 }
